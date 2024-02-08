@@ -26,6 +26,9 @@ public readonly record struct Result<TResult>
     public TResult? Value => _value;
     public IReadOnlyCollection<Error> Errors => _errors;
 
+    public static Result<TResult> Ok(object value) => new ((TResult)value);
+    public static Result<TResult> Error(Error error) => new([error]);
+    
     public static implicit operator Result<TResult>(TResult value)
     {
         return new(value);
