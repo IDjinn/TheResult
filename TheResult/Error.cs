@@ -1,7 +1,11 @@
 ﻿namespace TheResult;
 
-public readonly record struct Error
+public readonly record struct Error(string Code, string? Message = null)
 {
-    public required string Code { get; init; }
-    public string? Message { get; init; }
+    public static Error NotFound(string? message = null, string? code = null) =>
+        new(code ?? "generic.error.not-found", message);
+    public static Error Failure(string? message = null, string? code = null) =>
+        new(code ?? "generic.error.failure", message);
+    public static Error Validation(string? message = null, string? code = null) =>
+        new(code ?? "generic.error.validation", message);
 }
