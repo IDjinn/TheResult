@@ -26,8 +26,10 @@ public readonly record struct Result<TResult>
     public TResult? Value => _value;
     public IReadOnlyCollection<Error> Errors => _errors;
 
+    public static Result<TResult> Ok(TResult value) => new (value);
     public static Result<TResult> Ok(object value) => new ((TResult)value);
     public static Result<TResult> Error(Error error) => new([error]);
+    public static Result<TResult> Error(Error[] error) => new(error);
     
     public static implicit operator Result<TResult>(TResult value)
     {
@@ -58,5 +60,15 @@ public readonly record struct Result<TResult>
             return error(Errors);
 
         return success(Value!);
+    }
+    public async ValueTask<TReturnValue> MatchAsync<TReturnValue>(
+        Func<TResult, ValueTask<TReturnValue>> success,
+        Func<IReadOnlyCollection<Error>, ValueTask<TReturnValue>> error
+    )
+    {
+        if (HasErrors)
+            return await error(Errors);
+
+        return await success(Value!);
     }
 }

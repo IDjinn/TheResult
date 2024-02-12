@@ -55,4 +55,22 @@ public class ResultTestings
             return ValueTask.CompletedTask;
         });
     }
+
+    [Fact]
+    public async ValueTask<Result<bool>> match_value_task()
+    {
+        var result = new Result<bool>([new Error { Code = "wtf"}]) ;
+        return await result.MatchAsync(
+            async value =>
+            {
+                await ValueTask.CompletedTask;
+                return Result<bool>.Ok(value);
+            },
+            async errors =>
+            {
+                await ValueTask.CompletedTask;
+                return Result<bool>.Error(errors.ToArray());
+            }
+        );
+    }
 }
